@@ -12,7 +12,7 @@ clean-pyc: ## remove Python file artifacts
 	find . -name '*.pyo' -exec rm -f {} +
 	find . -name '*~' -exec rm -f {} +
 
-run-test:
+test:
 	pytest --flake8 --black --cov=leaderboards_scraper --cov-report term-missing tests/
 
 run:
@@ -26,5 +26,5 @@ release-prod: clean
 	python setup.py sdist bdist_wheel
 	twine upload --repository pypi dist/*
 
-t: run-test
-test: init-dev t
+t: test
+r: run

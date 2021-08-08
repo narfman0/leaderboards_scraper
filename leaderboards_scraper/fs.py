@@ -4,6 +4,8 @@ import os
 
 from pydantic.json import pydantic_encoder
 
+from leaderboards_scraper.models import Player, Run
+
 PLAYERS_JSON_PATH = "data/players.json"
 
 
@@ -26,7 +28,7 @@ def load_players(players_json_path=PLAYERS_JSON_PATH):
         result = json.loads(file.read())
         players = []
         for result_item in result:
-            players.append(Player(name=result["name"], id=result["id"]))
+            players.append(Player(**result_item))
         logging.info(f"Read {len(players)} players")
         return players
 
@@ -36,9 +38,15 @@ def load_parsed_runs():
     for path in os.listdir("data/runs"):
         if path.startswith("parsed"):
             with open(f"data/runs/{path}") as file:
-                result = json.loads(file.read())
-                logging.info(f"Read {len(result)} runs...")
-                runs.extend(result)
+                run_dicts = json.loads(file.read())
+                for run_dict in run_dicts:
+                    try:
+                        runs.append(Run(**run_dict))
+                    except Exception as e:
+                        logging.warning(
+                            f"Failed to read run_dict entry {run_dict} with error {e}"
+                        )
+                logging.info(f"Read {len(run_dicts)} runs...")
     return runs
 
 

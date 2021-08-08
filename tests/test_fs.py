@@ -9,9 +9,3 @@ class TestFs(unittest.TestCase):
             content = file.read()
             content_json = json.loads(content)
             fs.store_raw_category_runs_page("abc123", 0, content_json["data"])
-
-    def test_store_parsed_category_runs_page(self):
-        with open("data/runs/raw_rklxwwkn_0.json") as file:
-            content = file.read()
-            content_json = json.loads(content)
-            fs.store_parsed_category_runs_page("abc123", 0, content_json["data"])

@@ -50,18 +50,14 @@ def trigger_next_request(category_id, page_number, response_json):
 
 def process_category_runs(category_id):
     process_category_runs_page(
-        category_id,
-        f"{SRC_API_RUNS}{category_id}",
-        0,
+        category_id, f"{SRC_API_RUNS}{category_id}", 0,
     )
 
 
 def process_runs():
     for category_id in SRC_SMB3_CATEGORY_IDS:
         process_category_runs_page(
-            category_id,
-            f"{SRC_API_RUNS}{category_id}",
-            0,
+            category_id, f"{SRC_API_RUNS}{category_id}", 0,
         )
 
 
@@ -70,10 +66,10 @@ def process_players():
     runs = load_parsed_runs()
     run_player_ids = set()
     for run in runs:
-        run_player_ids.union(run.player_ids)
+        run_player_ids = run_player_ids.union(run.player_ids)
     # all players stored locally
     local_player_ids = set([player.id for player in load_players()])
     unknown_player_ids = run_player_ids - local_player_ids
-    breakpoint()
+    # TODO
     pass
     # load_unknown_players(unknown_player_ids)
