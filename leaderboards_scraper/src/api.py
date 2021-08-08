@@ -1,8 +1,4 @@
 import logging
-from os.path import exists
-import random
-import requests
-import time
 
 from leaderboards_scraper.fs import (
     load_raw_file_json,
@@ -11,6 +7,7 @@ from leaderboards_scraper.fs import (
     store_raw_category_runs_page,
 )
 from leaderboards_scraper.src.parser import parse_category_runs_page
+from leaderboards_scraper.web import get_json_from_url
 
 SRC_API_ROOT = "https://www.speedrun.com/api/v1"
 SRC_API_RUNS = SRC_API_ROOT + "/runs?max=200&category="
@@ -29,7 +26,7 @@ SRC_SMB3_CATEGORY_IDS = [
 
 def process_category_runs_page(category_id, url, page_number):
     if not does_raw_file_exists(category_id, page_number):
-        response_json = make_request(category_id, page_number, url)
+        response_json = get_json_from_url(category_id, page_number, url)
         store_raw_category_runs_page(category_id, page_number, response_json)
     else:
         response_json = load_raw_file_json(category_id, page_number)
@@ -46,20 +43,6 @@ def trigger_next_request(category_id, page_number, response_json):
                 f"Found next_url {next_uri} for category {category_id} page {page_number}"
             )
             process_category_runs_page(category_id, next_uri, page_number + 1)
-
-
-def make_request(category_id, page_number, url):
-    # cautiously wait before next call
-    time.sleep(10 + random.randint(0, 50))
-    logging.info(f"Making request for category {category_id} page {page_number}")
-    r = requests.get(url)
-    if r.status_code != 200:
-        log_string = (
-            f"Failed to download {url} for category {category_id} page {page_number}"
-        )
-        logging.warning(log_string)
-        raise Exception(log_string)
-    return r.json()
 
 
 def process_category_runs(category_id):
