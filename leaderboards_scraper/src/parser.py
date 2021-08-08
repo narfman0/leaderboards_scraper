@@ -1,6 +1,6 @@
 import logging
 
-from leaderboards_scraper.models import Run
+from leaderboards_scraper.models import Player, Run
 
 
 def parse_category_runs_page(runs_json):
@@ -10,6 +10,13 @@ def parse_category_runs_page(runs_json):
         if run:
             runs.append(run)
     return runs
+
+
+def parse_player(player_json):
+    return Player(
+        id=player_json["id"],
+        name=player_json["names"]["international"],
+    )
 
 
 def run_from_src_api_json(run_json):

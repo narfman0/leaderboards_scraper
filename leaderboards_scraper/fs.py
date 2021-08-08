@@ -6,11 +6,21 @@ from pydantic.json import pydantic_encoder
 
 from leaderboards_scraper.models import Player, Run
 
-PLAYERS_JSON_PATH = "data/players.json"
+PLAYERS_JSON_PATH = "data/players/parsed_players.json"
 
 
 def does_raw_run_exist(category_id, page_number):
     return os.path.exists(f"data/runs/raw_{category_id}_{page_number}.json")
+
+def does_raw_player_exist(player_id):
+    return os.path.exists(f"data/players/raw_{player_id}.json")
+
+
+def load_raw_player_json(player_id):
+    with open(f"data/players/raw_{player_id}.json") as file:
+        result = json.loads(file.read())
+        logging.info(f"Read raw player {player_id}")
+        return result
 
 
 def load_raw_run_json(category_id, page_number):
@@ -21,7 +31,7 @@ def load_raw_run_json(category_id, page_number):
         return result
 
 
-def load_players(players_json_path=PLAYERS_JSON_PATH):
+def load_parsed_players(players_json_path=PLAYERS_JSON_PATH):
     if not os.path.exists(players_json_path):
         return []
     with open(players_json_path) as file:
@@ -56,8 +66,19 @@ def store_parsed_category_runs_page(category_id, page_number, runs):
         logging.info(f"Wrote parsed category {category_id} page {page_number}")
 
 
+def store_parsed_players(players):
+    with open(PLAYERS_JSON_PATH, "w") as file:
+        file.write(json.dumps(players, default=pydantic_encoder))
+        logging.info(f"Wrote {len(players)} parsed players")
+
 def store_raw_category_runs_page(category_id, page_number, runs_page):
     # store in database to compare if runs are updated? maybe later
     with open(f"data/runs/raw_{category_id}_{page_number}.json", "w") as file:
         file.write(json.dumps(runs_page))
         logging.info(f"Wrote raw category {category_id} page {page_number}")
+
+
+def store_raw_player(player_id, player_data):
+    with open(f"data/players/raw_{player_id}.json", "w") as file:
+        file.write(json.dumps(player_data))
+        logging.info(f"Wrote raw player {player_id}")
