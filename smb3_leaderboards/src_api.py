@@ -1,8 +1,10 @@
 import json
 import logging
-from pydantic.dataclasses import dataclass
+import random
 import requests
+import time
 
+from pydantic.dataclasses import dataclass
 from pydantic.json import pydantic_encoder
 
 from smb3_leaderboards.models import Run
@@ -17,20 +19,35 @@ SRC_SMB3_ANY_CATEGORY_ID = "wkpjpvkr"
 
 
 def download_category_runs_page(category_id, url, page_number):
-    logging.info(f"Starting download for category {category_id} page {page_number}")
-    r = requests.get(url)
-    if r.status_code != 200:
-        logging.warning("Failed to download " + category_id)
-    response_json = r.json()
+    response_json = make_request(category_id, page_number, url)
     store_raw_category_runs_page(category_id, page_number, response_json)
     runs = parse_category_runs_page(response_json["data"])
     store_parsed_category_runs_page(category_id, page_number, runs)
-    next_url = response_json["pagination"]["links"][0]["uri"]
-    if next_url:
-        logging.info(
-            f"Found next_url {next_url} for category {category_id} page {page_number}"
+    trigger_next_request(category_id, page_number, response_json)
+
+
+def trigger_next_request(category_id, page_number, response_json):
+    for link in response_json["pagination"]["links"]:
+        if link["rel"] == "next":
+            next_uri = link["uri"]
+            logging.info(
+                f"Found next_url {next_uri} for category {category_id} page {page_number}"
+            )
+            # wait between 1-2 hours before next call
+            time.sleep(60 * 60 + random.randint(0, 60 * 60))
+            download_category_runs_page(category_id, next_uri, page_number + 1)
+
+
+def make_request(category_id, page_number, url):
+    logging.info(f"Making request for category {category_id} page {page_number}")
+    r = requests.get(url)
+    if r.status_code != 200:
+        log_string = (
+            f"Failed to download {url} for category {category_id} page {page_number}"
         )
-        download_category_runs_page(category_id, next_url, page_number + 1)
+        logging.warning(log_string)
+        raise Exception(log_string)
+    return r.json()
 
 
 def store_parsed_category_runs_page(category_id, page_number, runs):
@@ -57,7 +74,9 @@ def parse_category_runs_page(runs_json):
 
 def download_category_runs(category_id):
     download_category_runs_page(
-        category_id, f"{SRC_API_RUNS}{SRC_SMB3_WARPLESS_CATEGORY_ID}", 0
+        category_id,
+        f"https://www.speedrun.com/api/v1/runs?max=200&category=rklxwwkn&offset=1000",
+        5,
     )
 
 
@@ -77,5 +96,4 @@ def run_from_src_api_json(run_json):
             splits_io_url=(run_json["splits"] or {}).get("uri"),
         )
     except Exception as e:
-        breakpoint()
         logging.warning(f"Exception {e} received for run_json {run_json}")
