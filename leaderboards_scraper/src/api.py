@@ -3,9 +3,9 @@ import logging
 from leaderboards_scraper.fs import (
     load_parsed_runs,
     load_players,
-    load_raw_file_json,
+    load_raw_run_json,
     store_parsed_category_runs_page,
-    does_raw_file_exists,
+    does_raw_run_exist,
     store_raw_category_runs_page,
 )
 from leaderboards_scraper.src.parser import parse_category_runs_page
@@ -28,11 +28,11 @@ SRC_SMB3_CATEGORY_IDS = [
 
 
 def process_category_runs_page(category_id, url, page_number):
-    if not does_raw_file_exists(category_id, page_number):
+    if not does_raw_run_exist(category_id, page_number):
         response_json = get_json_from_url(category_id, page_number, url)
         store_raw_category_runs_page(category_id, page_number, response_json)
     else:
-        response_json = load_raw_file_json(category_id, page_number)
+        response_json = load_raw_run_json(category_id, page_number)
     runs = parse_category_runs_page(response_json["data"])
     store_parsed_category_runs_page(category_id, page_number, runs)
     trigger_next_request(category_id, page_number, response_json)

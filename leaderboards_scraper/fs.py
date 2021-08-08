@@ -9,11 +9,11 @@ from leaderboards_scraper.models import Player, Run
 PLAYERS_JSON_PATH = "data/players.json"
 
 
-def does_raw_file_exists(category_id, page_number):
+def does_raw_run_exist(category_id, page_number):
     return os.path.exists(f"data/runs/raw_{category_id}_{page_number}.json")
 
 
-def load_raw_file_json(category_id, page_number):
+def load_raw_run_json(category_id, page_number):
     # store in database to compare if runs are updated? maybe later
     with open(f"data/runs/raw_{category_id}_{page_number}.json") as file:
         result = json.loads(file.read())
