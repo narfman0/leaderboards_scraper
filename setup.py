@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 
 setup(
-    name="smb3-leaderboards",
+    name="leaderboards-scraper",
     version="0.1.0",
     description=("Super Mario Bros 3 Leaderboards"),
     classifiers=[
@@ -12,7 +12,7 @@ setup(
         "Programming Language :: Python",
         "Topic :: Software Development :: Libraries :: Python Modules",
     ],
-    keywords="smb3-leaderboards",
+    keywords="leaderboards-scraper",
     author="Jon Robison",
     author_email="narfman0@gmail.com",
     license="LICENSE",

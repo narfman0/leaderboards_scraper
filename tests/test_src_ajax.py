@@ -1,6 +1,6 @@
 import json
 import unittest
-from smb3_leaderboards import src_ajax
+from leaderboards_scraper import src_ajax
 
 
 class TestSrcAjax(unittest.TestCase):

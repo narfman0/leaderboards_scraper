@@ -1,6 +1,6 @@
 import json
 import unittest
-from smb3_leaderboards import main
+from leaderboards_scraper import main
 
 
 class TestMain(unittest.TestCase):

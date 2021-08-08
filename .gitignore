@@ -91,5 +91,5 @@ ENV/
 .ropeproject
 
 # project specific
-data/*.json
-data/raw_*.html
+data/**/*.json
+data/**/*.html

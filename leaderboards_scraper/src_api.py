@@ -8,7 +8,7 @@ import time
 from pydantic.dataclasses import dataclass
 from pydantic.json import pydantic_encoder
 
-from smb3_leaderboards.models import Run
+from leaderboards_scraper.models import Run
 
 SRC_API_ROOT = "https://www.speedrun.com/api/v1"
 SRC_API_RUNS = SRC_API_ROOT + "/runs?max=200&category="
@@ -17,6 +17,12 @@ SRC_SMB3_WARPLESS_CATEGORY_ID = "rklxwwkn"
 SRC_SMB3_HUNDO_CATEGORY_ID = "7dg8z424"
 SRC_SMB3_NWW_CATEGORY_ID = "ndxjyj2q"
 SRC_SMB3_ANY_CATEGORY_ID = "wkpjpvkr"
+SRC_CATEGORIES = [
+    SRC_SMB3_WARPLESS_CATEGORY_ID,
+    SRC_SMB3_HUNDO_CATEGORY_ID,
+    SRC_SMB3_NWW_CATEGORY_ID,
+    SRC_SMB3_ANY_CATEGORY_ID,
+]
 
 
 def process_category_runs_page(category_id, url, page_number):
@@ -42,7 +48,7 @@ def trigger_next_request(category_id, page_number, response_json):
 
 def load_raw_file_json(category_id, page_number):
     # store in database to compare if runs are updated? maybe later
-    with open(f"data/raw_{category_id}_{page_number}.json") as file:
+    with open(f"data/runs/raw_{category_id}_{page_number}.json") as file:
         result = json.loads(file.read())
         logging.info(f"Read raw category {category_id} page {page_number}")
         return result
@@ -50,7 +56,7 @@ def load_raw_file_json(category_id, page_number):
 
 def make_request(category_id, page_number, url):
     # cautiously wait between 1-2 hours before next call
-    time.sleep(60 * 60 + random.randint(0, 60 * 60))
+    time.sleep(random.randint(0, 60))
     logging.info(f"Making request for category {category_id} page {page_number}")
     r = requests.get(url)
     if r.status_code != 200:
@@ -63,20 +69,20 @@ def make_request(category_id, page_number, url):
 
 
 def store_parsed_category_runs_page(category_id, page_number, runs):
-    with open(f"data/parsed_{category_id}_{page_number}.json", "w") as file:
+    with open(f"data/runs/parsed_{category_id}_{page_number}.json", "w") as file:
         file.write(json.dumps(runs, default=pydantic_encoder))
         logging.info(f"Wrote parsed category {category_id} page {page_number}")
 
 
 def store_raw_category_runs_page(category_id, page_number, runs_page):
     # store in database to compare if runs are updated? maybe later
-    with open(f"data/raw_{category_id}_{page_number}.json", "w") as file:
+    with open(f"data/runs/raw_{category_id}_{page_number}.json", "w") as file:
         file.write(json.dumps(runs_page))
         logging.info(f"Wrote raw category {category_id} page {page_number}")
 
 
 def does_raw_file_exists(category_id, page_number):
-    return exists(f"data/raw_{category_id}_{page_number}.json")
+    return exists(f"data/runs/raw_{category_id}_{page_number}.json")
 
 
 def parse_category_runs_page(runs_json):
@@ -91,7 +97,7 @@ def parse_category_runs_page(runs_json):
 def download_category_runs(category_id):
     process_category_runs_page(
         category_id,
-        f"{SRC_API_RUNS}{SRC_SMB3_WARPLESS_CATEGORY_ID}",
+        f"{SRC_API_RUNS}{category_id}",
         0,
     )
 

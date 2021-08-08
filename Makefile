@@ -13,10 +13,10 @@ clean-pyc: ## remove Python file artifacts
 	find . -name '*~' -exec rm -f {} +
 
 run-test:
-	pytest --flake8 --black --cov=smb3_leaderboards --cov-report term-missing tests/
+	pytest --flake8 --black --cov=leaderboards_scraper --cov-report term-missing tests/
 
 run:
-	python -m smb3_leaderboards.main
+	python -m leaderboards_scraper.main
 
 release-test: clean
 	python setup.py sdist bdist_wheel

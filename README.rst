@@ -1,11 +1,11 @@
-smb3-leaderboards
+leaderboards-scraper
 ==============
 
-.. image:: https://badge.fury.io/py/smb3-leaderboards.png
-    :target: https://badge.fury.io/py/smb3-leaderboards
+.. image:: https://badge.fury.io/py/leaderboards-scraper.png
+    :target: https://badge.fury.io/py/leaderboards-scraper
 
-.. image:: https://travis-ci.org/narfman0/smb3-leaderboards.png?branch=master
-    :target: https://travis-ci.org/narfman0/smb3-leaderboards
+.. image:: https://travis-ci.org/narfman0/leaderboards-scraper.png?branch=master
+    :target: https://travis-ci.org/narfman0/leaderboards-scraper
 
 Super Mario Bros 3 Leaderboards
 
@@ -14,7 +14,7 @@ Installation
 
 Install via pip::
 
-    pip install smb3-leaderboards
+    pip install leaderboards-scraper
 
 Development
 -----------

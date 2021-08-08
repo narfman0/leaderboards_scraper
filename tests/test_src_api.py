@@ -1,6 +1,6 @@
 import json
 import unittest
-from smb3_leaderboards import src_api
+from leaderboards_scraper import src_api
 
 
 class TestSrcApi(unittest.TestCase):
@@ -11,7 +11,7 @@ class TestSrcApi(unittest.TestCase):
             src_api.store_raw_category_runs_page("abc123", 0, content_json["data"])
 
     def test_store_parsed_category_runs_page(self):
-        with open("data/raw_rklxwwkn_0.json") as file:
+        with open("data/runs/raw_rklxwwkn_0.json") as file:
             content = file.read()
             content_json = json.loads(content)
             src_api.store_parsed_runs_page("abc123", 0, content_json["data"])

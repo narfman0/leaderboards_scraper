@@ -4,7 +4,7 @@ import requests
 
 from bs4 import BeautifulSoup
 
-from smb3_leaderboards.models import Run
+from leaderboards_scraper.models import Run
 
 SRC_WARPLESS_CATEGORY_ID = 581
 API_ROOT = "https://www.speedrun.com/ajax_leaderboard.php?vary=1628107622&timeunits=0&game=smb3&verified=1&region=&platform=&emulator=2&video=&obsolete=&date=&category="
@@ -12,7 +12,7 @@ API_ROOT = "https://www.speedrun.com/ajax_leaderboard.php?vary=1628107622&timeun
 
 def store_category_runs(category_id, html):
     # store in database to compare if runs are updated? maybe later
-    with open(f"data/raw_ajax_{category_id}.html", "w") as file:
+    with open(f"data/runs/raw_ajax_{category_id}.html", "w") as file:
         file.write(html)
     soup = BeautifulSoup(html, "html.parser")
     runs = []
