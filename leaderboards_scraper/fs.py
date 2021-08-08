@@ -1,12 +1,14 @@
 import json
 import logging
-from os.path import exists
+import os
 
 from pydantic.json import pydantic_encoder
 
+PLAYERS_JSON_PATH = "data/players.json"
+
 
 def does_raw_file_exists(category_id, page_number):
-    return exists(f"data/runs/raw_{category_id}_{page_number}.json")
+    return os.path.exists(f"data/runs/raw_{category_id}_{page_number}.json")
 
 
 def load_raw_file_json(category_id, page_number):
@@ -15,6 +17,29 @@ def load_raw_file_json(category_id, page_number):
         result = json.loads(file.read())
         logging.info(f"Read raw category {category_id} page {page_number}")
         return result
+
+
+def load_players(players_json_path=PLAYERS_JSON_PATH):
+    if not os.path.exists(players_json_path):
+        return []
+    with open(players_json_path) as file:
+        result = json.loads(file.read())
+        players = []
+        for result_item in result:
+            players.append(Player(name=result["name"], id=result["id"]))
+        logging.info(f"Read {len(players)} players")
+        return players
+
+
+def load_parsed_runs():
+    runs = []
+    for path in os.listdir("data/runs"):
+        if path.startswith("parsed"):
+            with open(f"data/runs/{path}") as file:
+                result = json.loads(file.read())
+                logging.info(f"Read {len(result)} runs...")
+                runs.extend(result)
+    return runs
 
 
 def store_parsed_category_runs_page(category_id, page_number, runs):

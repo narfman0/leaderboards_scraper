@@ -1,6 +1,8 @@
 import logging
 
 from leaderboards_scraper.fs import (
+    load_parsed_runs,
+    load_players,
     load_raw_file_json,
     store_parsed_category_runs_page,
     does_raw_file_exists,
@@ -11,6 +13,7 @@ from leaderboards_scraper.web import get_json_from_url
 
 SRC_API_ROOT = "https://www.speedrun.com/api/v1"
 SRC_API_RUNS = SRC_API_ROOT + "/runs?max=200&category="
+SRC_API_USER = SRC_API_ROOT + "/users/"
 SRC_SMB3_GAME_ID = "l3dx51yv"
 SRC_SMB3_WARPLESS_CATEGORY_ID = "rklxwwkn"
 SRC_SMB3_HUNDO_CATEGORY_ID = "7dg8z424"
@@ -60,3 +63,17 @@ def process_runs():
             f"{SRC_API_RUNS}{category_id}",
             0,
         )
+
+
+def process_players():
+    # all players in available runs
+    runs = load_parsed_runs()
+    run_player_ids = set()
+    for run in runs:
+        run_player_ids.union(run.player_ids)
+    # all players stored locally
+    local_player_ids = set([player.id for player in load_players()])
+    unknown_player_ids = run_player_ids - local_player_ids
+    breakpoint()
+    pass
+    # load_unknown_players(unknown_player_ids)
