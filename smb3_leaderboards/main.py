@@ -10,6 +10,7 @@ from smb3_leaderboards.src_api import (
 
 
 def main():
+    logging.basicConfig(filename="leaderboards.log", level=logging.INFO)
     # we want to decouple api json requests and generating websites, while doing this cheaply
     # 1. download all /runs locally with respectful/stealth mode invocation
     download_category_runs(SRC_SMB3_WARPLESS_CATEGORY_ID)
