@@ -31,14 +31,16 @@ SRC_SMB3_CATEGORY_IDS = [
 ]
 
 
-def process_category_runs_page(category_id, url, page_number):
+def process_category_runs_page(category_id, url, page_number, runs=None):
     if not does_raw_run_exist(category_id, page_number):
         response_json = get_json_from_url(category_id, page_number, url)
         store_raw_category_runs_page(category_id, page_number, response_json)
     else:
         response_json = load_raw_run_json(category_id, page_number)
-    runs = parse_category_runs_page(response_json["data"])
-    store_parsed_category_runs_page(category_id, page_number, runs)
+    parsed_runs = parse_category_runs_page(response_json["data"])
+    store_parsed_category_runs_page(category_id, page_number, parsed_runs)
+    if runs:
+        runs.extend(parsed_runs)
     trigger_next_request(category_id, page_number, response_json)
 
 
@@ -52,16 +54,14 @@ def trigger_next_request(category_id, page_number, response_json):
             process_category_runs_page(category_id, next_uri, page_number + 1)
 
 
-def process_category_runs(category_id):
-    process_category_runs_page(
-        category_id, f"{SRC_API_RUNS}{category_id}", 0,
-    )
-
-
 def process_runs():
+    runs = []
     for category_id in SRC_SMB3_CATEGORY_IDS:
         process_category_runs_page(
-            category_id, f"{SRC_API_RUNS}{category_id}", 0,
+            category_id,
+            f"{SRC_API_RUNS}{category_id}",
+            0,
+            runs=runs,
         )
 
 
@@ -76,10 +76,13 @@ def process_players():
     unknown_player_ids = run_player_ids - local_player_ids
     players = []
     for unknown_player_id in unknown_player_ids:
-        if not does_raw_player_exist(unknown_player_id):
-            response_json = get_json_from_url(SRC_API_USER + unknown_player_id)
-            store_raw_player(unknown_player_id, response_json)
-        else:
-            response_json = load_raw_player_json(unknown_player_id)
-        players.append(parse_player(response_json["data"]))
+        try:
+            if not does_raw_player_exist(unknown_player_id):
+                response_json = get_json_from_url(SRC_API_USER + unknown_player_id)
+                store_raw_player(unknown_player_id, response_json)
+            else:
+                response_json = load_raw_player_json(unknown_player_id)
+            players.append(parse_player(response_json["data"]))
+        except Exception as e:
+            logging.warning(e)
     store_parsed_players(players)

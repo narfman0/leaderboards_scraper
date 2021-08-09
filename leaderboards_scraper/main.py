@@ -8,7 +8,7 @@ def main():
     # we want to decouple api json requests and generating websites, while
     # doing this cheaply
     # 1. download all /runs locally with respectful/stealth mode invocation
-    # api.process_runs()
+    api.process_runs()
     api.process_players()
 
     # 2. have system to generate markdown from local runs json
