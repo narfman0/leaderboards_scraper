@@ -73,18 +73,23 @@ def process_players():
     for run in runs:
         run_player_ids = run_player_ids.union(run.player_ids)
     # all players stored locally
-    local_player_ids = set([player.id for player in load_parsed_players()])
+    parsed_players = load_parsed_players()
+    local_player_ids = set([player.id for player in parsed_players])
     unknown_player_ids = run_player_ids - local_player_ids
-    players = []
     for unknown_player_id in unknown_player_ids:
         try:
             if not does_raw_player_exist(unknown_player_id):
                 response_json = get_json_from_url(SRC_API_USER + unknown_player_id)
+                if not response_json:
+                    logging.warning(
+                        f"Response json null for player {unknown_player_id}, skipping"
+                    )
+                    continue
                 store_raw_player(unknown_player_id, response_json)
             else:
                 response_json = load_raw_player_json(unknown_player_id)
-            players.append(parse_player(response_json["data"]))
+            parsed_players.append(parse_player(response_json["data"]))
         except Exception as e:
             logging.warning(e)
-    store_parsed_players(players)
-    return players
+    store_parsed_players(parsed_players)
+    return parsed_players
