@@ -12,6 +12,7 @@ PLAYERS_JSON_PATH = "data/players/parsed_players.json"
 def does_raw_run_exist(category_id, page_number):
     return os.path.exists(f"data/runs/raw_{category_id}_{page_number}.json")
 
+
 def does_raw_player_exist(player_id):
     return os.path.exists(f"data/players/raw_{player_id}.json")
 
@@ -66,10 +67,17 @@ def store_parsed_category_runs_page(category_id, page_number, runs):
         logging.info(f"Wrote parsed category {category_id} page {page_number}")
 
 
+def store_parsed_runs(category_id, runs):
+    with open(f"data/runs/parsed_{category_id}_runs.json", "w") as file:
+        file.write(json.dumps(runs, default=pydantic_encoder))
+        logging.info(f"Wrote parsed {len(runs)} {category_id} runs")
+
+
 def store_parsed_players(players):
     with open(PLAYERS_JSON_PATH, "w") as file:
         file.write(json.dumps(players, default=pydantic_encoder))
         logging.info(f"Wrote {len(players)} parsed players")
+
 
 def store_raw_category_runs_page(category_id, page_number, runs_page):
     # store in database to compare if runs are updated? maybe later

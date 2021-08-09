@@ -9,6 +9,7 @@ from leaderboards_scraper.fs import (
     load_raw_player_json,
     store_parsed_category_runs_page,
     store_parsed_players,
+    store_parsed_runs,
     store_raw_category_runs_page,
     store_raw_player,
 )
@@ -31,7 +32,7 @@ SRC_SMB3_CATEGORY_IDS = [
 ]
 
 
-def process_category_runs_page(category_id, url, page_number, runs=None):
+def process_category_runs_page(category_id, url, page_number, runs):
     if not does_raw_run_exist(category_id, page_number):
         response_json = get_json_from_url(category_id, page_number, url)
         store_raw_category_runs_page(category_id, page_number, response_json)
@@ -39,30 +40,30 @@ def process_category_runs_page(category_id, url, page_number, runs=None):
         response_json = load_raw_run_json(category_id, page_number)
     parsed_runs = parse_category_runs_page(response_json["data"])
     store_parsed_category_runs_page(category_id, page_number, parsed_runs)
-    if runs:
-        runs.extend(parsed_runs)
-    trigger_next_request(category_id, page_number, response_json)
+    runs.extend(parsed_runs)
+    trigger_next_request(category_id, page_number, response_json, runs)
 
 
-def trigger_next_request(category_id, page_number, response_json):
+def trigger_next_request(category_id, page_number, response_json, runs):
     for link in response_json["pagination"]["links"]:
         if link["rel"] == "next":
             next_uri = link["uri"]
             logging.info(
                 f"Found next_url {next_uri} for category {category_id} page {page_number}"
             )
-            process_category_runs_page(category_id, next_uri, page_number + 1)
+            process_category_runs_page(category_id, next_uri, page_number + 1, runs)
 
 
 def process_runs():
-    runs = []
     for category_id in SRC_SMB3_CATEGORY_IDS:
+        runs = []
         process_category_runs_page(
             category_id,
             f"{SRC_API_RUNS}{category_id}",
             0,
-            runs=runs,
+            runs,
         )
+        store_parsed_runs(category_id, runs)
 
 
 def process_players():
@@ -86,3 +87,4 @@ def process_players():
         except Exception as e:
             logging.warning(e)
     store_parsed_players(players)
+    return players
