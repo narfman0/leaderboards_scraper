@@ -55,6 +55,7 @@ def trigger_next_request(category_id, page_number, response_json, runs):
 
 
 def process_runs():
+    category_to_runs = {}
     for category_id in SRC_SMB3_CATEGORY_IDS:
         runs = []
         process_category_runs_page(
@@ -64,6 +65,8 @@ def process_runs():
             runs,
         )
         store_parsed_runs(category_id, runs)
+        category_to_runs[category_id] = runs
+    return category_to_runs
 
 
 def process_players():
@@ -92,4 +95,4 @@ def process_players():
         except Exception as e:
             logging.warning(e)
     store_parsed_players(parsed_players)
-    return parsed_players
+    return {player.id: player for player in parsed_players}

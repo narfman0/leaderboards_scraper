@@ -93,3 +93,4 @@ ENV/
 # project specific
 data/**/*.json
 data/**/*.html
+data/**/*.md

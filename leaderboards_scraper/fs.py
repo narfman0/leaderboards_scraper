@@ -90,3 +90,9 @@ def store_raw_player(player_id, player_data):
     with open(f"data/players/raw_{player_id}.json", "w") as file:
         file.write(json.dumps(player_data))
         logging.info(f"Wrote raw player {player_id}")
+
+
+def store_category_leaderboard(category_id, markdown):
+    with open(f"data/leaderboards/{category_id}.md", "w") as file:
+        file.write(markdown)
+        logging.info(f"Wrote category leaderboard {category_id}")
