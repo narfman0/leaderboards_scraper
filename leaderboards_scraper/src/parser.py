@@ -12,7 +12,7 @@ def parse_category_runs_page(runs_json):
     return runs
 
 
-def parse_player(player_json):
+def parse_raw_player(player_json):
     return Player(
         id=player_json["id"],
         name=player_json["names"]["international"],
@@ -21,22 +21,21 @@ def parse_player(player_json):
 
 def run_from_src_api_json(run_json):
     run_id = run_json["id"]
-    try:
-        player_ids = []
-        for player in run_json["players"]:
-            if "id" in player:
-                player_ids.append(player["id"])
-            else:
-                logging.info(f"Player found without id: {player}")
-        return Run(
-            id=run_id,
-            player_ids=player_ids,
-            category_id=run_json["category"],
-            video_url=run_json["videos"]["links"][0]["uri"],
-            comment=run_json["comment"],
-            date=run_json["date"],
-            time=run_json["times"].get("realtime_t"),
-            splits_io_url=(run_json["splits"] or {}).get("uri"),
-        )
-    except Exception as e:
-        logging.warning(f"Exception {e} received for run_id {run_id}")
+    players = []
+    for player in run_json["players"]:
+        players.append(Player(player.get("id"), player.get("name")))
+    video_link = None
+    for link in run_json["videos"].get("links", []):
+        if "uri" in link:
+            video_link = link["uri"]
+    return Run(
+        id=run_id,
+        players=players,
+        category_id=run_json["category"],
+        video_url=video_link,
+        comment=run_json["comment"],
+        date=run_json["date"],
+        time=run_json["times"].get("realtime_t"),
+        splits_io_url=(run_json["splits"] or {}).get("uri"),
+        status=run_json["status"]["status"],
+    )

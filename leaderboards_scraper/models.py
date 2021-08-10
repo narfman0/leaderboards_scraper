@@ -4,23 +4,24 @@ from pydantic.dataclasses import dataclass
 
 
 @dataclass
+class Player:
+    id: str = None
+    name: str = None
+
+
+@dataclass
 class Run:
     """Class for keeping track of a run."""
 
     id: str
-    player_ids: List[str]
+    players: List[Player]
     category_id: str
     date: str
-    video_url: str
     time: int  # seconds
+    status: str
+    video_url: str = None
     comment: str = None
     splits_io_url: str = None
-
-
-@dataclass
-class Player:
-    id: str
-    name: str
 
 
 @dataclass

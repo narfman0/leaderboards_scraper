@@ -13,7 +13,7 @@ from leaderboards_scraper.fs import (
     store_raw_category_runs_page,
     store_raw_player,
 )
-from leaderboards_scraper.src.parser import parse_category_runs_page, parse_player
+from leaderboards_scraper.src.parser import parse_category_runs_page, parse_raw_player
 from leaderboards_scraper.web import get_json_from_url
 
 SRC_API_ROOT = "https://www.speedrun.com/api/v1"
@@ -74,7 +74,7 @@ def process_players():
     runs = load_parsed_runs()
     run_player_ids = set()
     for run in runs:
-        run_player_ids = run_player_ids.union(run.player_ids)
+        run_player_ids = run_player_ids.union([player.id for player in run.players])
     # all players stored locally
     parsed_players = load_parsed_players()
     local_player_ids = set([player.id for player in parsed_players])
@@ -91,7 +91,7 @@ def process_players():
                 store_raw_player(unknown_player_id, response_json)
             else:
                 response_json = load_raw_player_json(unknown_player_id)
-            parsed_players.append(parse_player(response_json["data"]))
+            parsed_players.append(parse_raw_player(response_json["data"]))
         except Exception as e:
             logging.warning(e)
     store_parsed_players(parsed_players)

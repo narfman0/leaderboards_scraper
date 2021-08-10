@@ -18,14 +18,16 @@ def main():
         seen_players = []
         pb_runs = []
         for run in runs:
-            player_ids_agg = "|".join(run.player_ids)
+            if run.status != "verified":
+                continue
+            player_ids_agg = "|".join(
+                filter(None, [player.id for player in run.players])
+            )
             if player_ids_agg in seen_players:
                 continue
             seen_players.append(player_ids_agg)
             pb_runs.append(run)
-        markdown = md.generate_category_leaderboard(
-            category_id, pb_runs, player_id_to_players
-        )
+        markdown = md.generate_category_leaderboard(pb_runs, player_id_to_players)
         fs.store_category_leaderboard(category_id, markdown)
     # 3. git add markdown to jekyll website, commit, push, let static site generation solve everything?
     # followon work
