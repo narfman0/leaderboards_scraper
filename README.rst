@@ -1,5 +1,5 @@
 leaderboards-scraper
-==============
+====================
 
 .. image:: https://badge.fury.io/py/leaderboards-scraper.png
     :target: https://badge.fury.io/py/leaderboards-scraper
@@ -9,13 +9,6 @@ leaderboards-scraper
 
 Super Mario Bros 3 Leaderboards
 
-Installation
-------------
-
-Install via pip::
-
-    pip install leaderboards-scraper
-
 Development
 -----------
 
@@ -23,16 +16,11 @@ Run test suite to ensure everything works::
 
     make test
 
-Release
--------
-
-To publish your plugin to pypi, sdist and wheels are registered, created and uploaded with::
-
-    make release-test
-
-For test. After ensuring the package works, run the prod target and win::
-
-    make release-prod
+TODO
+----
+    
+* observe milliseconds (for high level runs)
+* rank equality
 
 License
 -------
