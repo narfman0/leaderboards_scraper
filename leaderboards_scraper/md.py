@@ -16,11 +16,13 @@ def generate_categories_rows(runs, player_id_to_players):
             for player in run.players
         ]
         player_names_agg = ",".join(player_names)
+        # TODO markdown encoders can't handle many non-ascii characters
+        player_names_ascii = player_names_agg.encode("ascii", errors="ignore").decode()
 
         m, s = divmod(run.time, 60)
         h, m = divmod(m, 60)
         run_time = "%d:%02d:%02d" % (h, m, s)
-        yield f"| {i} | {player_names_agg} | {run_time} | {run.date} | [link]({run.video_url}) |"
+        yield f"| {i} | {player_names_ascii} | {run_time} | {run.date} | [link]({run.video_url}) |"
 
 
 def generate_categories_header():
