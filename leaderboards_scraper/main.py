@@ -11,6 +11,9 @@ def main():
     # 1. download all /runs locally with respectful/stealth mode invocation
     category_to_runs = api.process_runs()
     player_id_to_players = api.process_players()
+    category_id_to_name = {
+        category.id: category.name for category in fs.load_categories()
+    }
 
     # 2. generate markdown from local runs json
     for category_id, runs in category_to_runs.items():
@@ -27,7 +30,10 @@ def main():
                 continue
             seen_players.append(player_ids_agg)
             pb_runs.append(run)
-        markdown = md.generate_category_leaderboard(pb_runs, player_id_to_players)
+        category_name = category_id_to_name[category_id]
+        markdown = md.generate_category_leaderboard(
+            pb_runs, player_id_to_players, category_name
+        )
         fs.store_category_leaderboard(category_id, markdown)
     # 3. git add markdown to jekyll website, commit, push, let static site generation solve everything?
     # followon work

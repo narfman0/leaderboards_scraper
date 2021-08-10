@@ -1,9 +1,10 @@
 import datetime
 
 
-def generate_category_leaderboard(runs, player_id_to_players):
+def generate_category_leaderboard(runs, player_id_to_players, category_name):
     return "\n".join(
-        generate_categories_header()
+        generate_jekyll_header(category_name)
+        + generate_categories_header()
         + list(generate_categories_rows(runs, player_id_to_players)),
     )
 
@@ -26,4 +27,16 @@ def generate_categories_header():
     return [
         "| Rank | Player | Time | Date | Video |",
         " ---- | ------ | ---- | ---- | ----- ",
+    ]
+
+
+def generate_jekyll_header(category_name):
+    return [
+        "---",
+        "layout: post",
+        f'title:  "{category_name}"',
+        "date:   2021-08-09 21:00:00 -0500",
+        "categories: speedrun",
+        "---",
+        "",
     ]

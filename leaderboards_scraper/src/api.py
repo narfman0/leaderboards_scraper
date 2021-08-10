@@ -3,6 +3,7 @@ import logging
 from leaderboards_scraper.fs import (
     does_raw_player_exist,
     does_raw_run_exist,
+    load_categories,
     load_parsed_runs,
     load_parsed_players,
     load_raw_run_json,
@@ -20,16 +21,6 @@ SRC_API_ROOT = "https://www.speedrun.com/api/v1"
 SRC_API_RUNS = SRC_API_ROOT + "/runs?max=200&category="
 SRC_API_USER = SRC_API_ROOT + "/users/"
 SRC_SMB3_GAME_ID = "l3dx51yv"
-SRC_SMB3_WARPLESS_CATEGORY_ID = "rklxwwkn"
-SRC_SMB3_HUNDO_CATEGORY_ID = "7dg8z424"
-SRC_SMB3_NWW_CATEGORY_ID = "ndxjyj2q"
-SRC_SMB3_ANY_CATEGORY_ID = "wkpjpvkr"
-SRC_SMB3_CATEGORY_IDS = [
-    SRC_SMB3_WARPLESS_CATEGORY_ID,
-    SRC_SMB3_HUNDO_CATEGORY_ID,
-    SRC_SMB3_NWW_CATEGORY_ID,
-    SRC_SMB3_ANY_CATEGORY_ID,
-]
 
 
 def process_category_runs_page(category_id, url, page_number, runs):
@@ -56,16 +47,16 @@ def trigger_next_request(category_id, page_number, response_json, runs):
 
 def process_runs():
     category_to_runs = {}
-    for category_id in SRC_SMB3_CATEGORY_IDS:
+    for category in load_categories():
         runs = []
         process_category_runs_page(
-            category_id,
-            f"{SRC_API_RUNS}{category_id}",
+            category.id,
+            f"{SRC_API_RUNS}{category.id}",
             0,
             runs,
         )
-        store_parsed_runs(category_id, runs)
-        category_to_runs[category_id] = runs
+        store_parsed_runs(category.id, runs)
+        category_to_runs[category.id] = runs
     return category_to_runs
 
 

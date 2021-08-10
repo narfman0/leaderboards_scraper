@@ -4,9 +4,10 @@ import os
 
 from pydantic.json import pydantic_encoder
 
-from leaderboards_scraper.models import Player, Run
+from leaderboards_scraper.models import Category, Player, Run
 
 PLAYERS_JSON_PATH = "data/players/parsed_players.json"
+CATEGORIES_JSON_PATH = "data/categories/smb3.json"
 
 
 def does_raw_run_exist(category_id, page_number):
@@ -30,6 +31,18 @@ def load_raw_run_json(category_id, page_number):
         result = json.loads(file.read())
         logging.info(f"Read raw category {category_id} page {page_number}")
         return result
+
+
+def load_categories(categories_json_path=CATEGORIES_JSON_PATH):
+    if not os.path.exists(categories_json_path):
+        return []
+    with open(categories_json_path) as file:
+        result = json.loads(file.read())
+        categories = []
+        for result_item in result["data"]:
+            categories.append(Category(result_item["id"], result_item["name"]))
+        logging.info(f"Read {len(categories)} categories")
+        return categories
 
 
 def load_parsed_players(players_json_path=PLAYERS_JSON_PATH):
