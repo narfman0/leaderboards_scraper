@@ -10,7 +10,8 @@ def generate_category_leaderboard(runs, player_id_to_players, category_name):
 
 
 def generate_categories_rows(runs, player_id_to_players):
-    for i, run in enumerate(runs, 1):
+    rank = 1
+    for i, run in enumerate(runs):
         player_names = [
             player.name or player_id_to_players[player.id].name
             for player in run.players
@@ -22,7 +23,10 @@ def generate_categories_rows(runs, player_id_to_players):
         m, s = divmod(run.time, 60)
         h, m = divmod(m, 60)
         run_time = "%d:%02d:%02d" % (h, m, s)
-        yield f"| {i} | {player_names_ascii} | {run_time} | {run.date} | [link]({run.video_url}) |"
+
+        if i > 0 and runs[i - 1].time != run.time:
+            rank = i + 1
+        yield f"| {rank} | {player_names_ascii} | {run_time} | {run.date} | [link]({run.video_url}) |"
 
 
 def generate_categories_header():
