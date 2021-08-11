@@ -25,7 +25,7 @@ SRC_SMB3_GAME_ID = "l3dx51yv"
 
 def process_category_runs_page(category_id, url, page_number, runs):
     if not does_raw_run_exist(category_id, page_number):
-        response_json = get_json_from_url(category_id, page_number, url)
+        response_json = get_json_from_url(url)
         store_raw_category_runs_page(category_id, page_number, response_json)
     else:
         response_json = load_raw_run_json(category_id, page_number)
