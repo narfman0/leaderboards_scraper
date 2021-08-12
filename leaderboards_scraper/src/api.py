@@ -48,15 +48,18 @@ def trigger_next_request(category_id, page_number, response_json, runs):
 def process_runs():
     category_to_runs = {}
     for category in load_categories():
-        runs = []
-        process_category_runs_page(
-            category.id,
-            f"{SRC_API_RUNS}{category.id}",
-            0,
-            runs,
-        )
-        store_parsed_runs(category.id, runs)
-        category_to_runs[category.id] = runs
+        try:
+            runs = []
+            process_category_runs_page(
+                category.id,
+                f"{SRC_API_RUNS}{category.id}",
+                0,
+                runs,
+            )
+            store_parsed_runs(category.id, runs)
+            category_to_runs[category.id] = runs
+        except Exception as e:
+            logging.error(f"Failed to process category {category.id} with error {e}")
     return category_to_runs
 
 
