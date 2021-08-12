@@ -20,9 +20,7 @@ def generate_categories_rows(runs, player_id_to_players):
         # TODO markdown encoders can't handle many non-ascii characters
         player_names_ascii = player_names_agg.encode("ascii", errors="ignore").decode()
 
-        m, s = divmod(run.time, 60)
-        h, m = divmod(m, 60)
-        run_time = "%d:%02d:%02d" % (h, m, s)
+        run_time = str(datetime.timedelta(seconds=run.time))
 
         if i > 0 and runs[i - 1].time != run.time:
             rank = i + 1

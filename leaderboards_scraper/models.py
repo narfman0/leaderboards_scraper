@@ -17,7 +17,7 @@ class Run:
     players: List[Player]
     category_id: str
     date: str
-    time: int  # seconds
+    time: float  # seconds
     status: str
     video_url: str = None
     comment: str = None
