@@ -12,6 +12,12 @@ clean-pyc: ## remove Python file artifacts
 	find . -name '*.pyo' -exec rm -f {} +
 	find . -name '*~' -exec rm -f {} +
 
+docker-build:
+	docker build -t leaderboards_scraper .
+
+docker-run:
+	docker run -it --rm leaderboards_scraper -v "$PWD"/data:/usr/src/app/data
+
 test:
 	pytest --flake8 --black --cov=leaderboards_scraper --cov-report term-missing tests/
 
