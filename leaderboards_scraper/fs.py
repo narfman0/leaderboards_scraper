@@ -58,10 +58,12 @@ def load_parsed_players(players_json_path=PLAYERS_JSON_PATH):
         return players
 
 
-def load_parsed_runs():
+def load_parsed_runs(category_id=None):
     runs = []
     for path in os.listdir(f"{DATA_PATH}/runs"):
         if path.startswith("parsed"):
+            if category_id and category_id not in path:
+                continue
             with open(f"{DATA_PATH}/runs/{path}") as file:
                 run_dicts = json.loads(file.read())
                 for run_dict in run_dicts:

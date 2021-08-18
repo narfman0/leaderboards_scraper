@@ -48,13 +48,14 @@ def process_runs():
     category_to_runs = {}
     for category in load_categories():
         try:
-            runs = []
+            runs = load_parsed_runs(category.id)
             process_category_runs_page(
                 category.id,
                 f"{SRC_API_RUNS}{category.id}",
                 0,
                 runs,
             )
+            runs = list({run.id: run for run in runs}.values())  # deduplicate
             store_parsed_runs(category.id, runs)
             category_to_runs[category.id] = runs
         except Exception as e:

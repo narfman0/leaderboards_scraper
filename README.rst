@@ -18,9 +18,8 @@ Run test suite to ensure everything works::
 
 TODO
 ----
-    
-* observe milliseconds (for high level runs)
-* rank equality
+
+* automatically update
 
 License
 -------
