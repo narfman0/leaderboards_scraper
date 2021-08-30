@@ -1,4 +1,5 @@
 import logging
+import random
 
 from leaderboards_scraper.fs import (
     does_raw_player_exist,
@@ -46,7 +47,9 @@ def trigger_next_request(category_id, page_number, response_json, runs):
 
 def process_runs():
     category_to_runs = {}
-    for category in load_categories():
+    categories = load_categories()
+    random.shuffle(categories)
+    for category in categories:
         try:
             runs = load_parsed_runs(category.id)
             process_category_runs_page(
