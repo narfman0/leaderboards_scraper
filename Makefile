@@ -16,7 +16,7 @@ docker-build:
 	docker build -t leaderboards_scraper .
 
 docker-run:
-	docker run -it -v $(PWD)/data:/usr/src/app/data --rm leaderboards_scraper
+	docker run -v $(PWD)/data:/usr/src/app/data --rm leaderboards_scraper
 
 test:
 	pytest --flake8 --black --cov=leaderboards_scraper --cov-report term-missing tests/
