@@ -77,7 +77,7 @@ def process_players():
     parsed_players = load_parsed_players()
     local_player_ids = set([player.id for player in parsed_players])
     unknown_player_ids = run_player_ids - local_player_ids
-    for unknown_player_id in unknown_player_ids:
+    for unknown_player_id in filter(lambda x: x is not None, unknown_player_ids):
         try:
             if not does_raw_player_exist(unknown_player_id):
                 response_json = get_json_from_url(SRC_API_USER + unknown_player_id)
