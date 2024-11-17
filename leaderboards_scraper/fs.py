@@ -41,7 +41,7 @@ def load_categories(categories_json_path=CATEGORIES_JSON_PATH):
         result = json.loads(file.read())
         categories = []
         for result_item in result["data"]:
-            categories.append(Category(result_item["id"], result_item["name"]))
+            categories.append(Category(id=result_item["id"], name=result_item["name"]))
         logging.info(f"Read {len(categories)} categories")
         return categories
 

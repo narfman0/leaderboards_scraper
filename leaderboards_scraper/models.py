@@ -1,36 +1,30 @@
-from typing import List
-
-from pydantic.dataclasses import dataclass
+from pydantic import BaseModel
 
 
-@dataclass
-class Player:
-    id: str = None
-    name: str = None
+class Player(BaseModel):
+    id: str | None = None
+    name: str | None = None
 
 
-@dataclass
-class Run:
+class Run(BaseModel):
     """Class for keeping track of a run."""
 
     id: str
-    players: List[Player]
+    players: list[Player]
     category_id: str
     date: str
     time: float  # seconds
     status: str
-    video_url: str = None
-    comment: str = None
-    splits_io_url: str = None
+    video_url: str | None = None
+    comment: str | None = None
+    splits_io_url: str | None = None
 
 
-@dataclass
-class Game:
+class Game(BaseModel):
     id: str
     name: str
 
 
-@dataclass
-class Category:
+class Category(BaseModel):
     id: str
     name: str

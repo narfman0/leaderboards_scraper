@@ -63,6 +63,7 @@ def process_runs():
             category_to_runs[category.id] = runs
         except Exception as e:
             logging.error(f"Failed to process category {category.id} with error {e}")
+            raise e
     return category_to_runs
 
 
@@ -91,5 +92,6 @@ def process_players():
             parsed_players.append(parse_raw_player(response_json["data"]))
         except Exception as e:
             logging.warning(e)
+            raise e
     store_parsed_players(parsed_players)
     return {player.id: player for player in parsed_players}

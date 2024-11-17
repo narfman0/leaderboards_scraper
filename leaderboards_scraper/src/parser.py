@@ -1,5 +1,3 @@
-import logging
-
 from leaderboards_scraper.models import Player, Run
 
 
@@ -23,7 +21,7 @@ def run_from_src_api_json(run_json):
     run_id = run_json["id"]
     players = []
     for player in run_json["players"]:
-        players.append(Player(player.get("id"), player.get("name")))
+        players.append(Player(id=player.get("id"), name=player.get("name")))
     video_link = None
     for link in run_json["videos"].get("links", []):
         if "uri" in link:
