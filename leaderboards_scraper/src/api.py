@@ -21,6 +21,8 @@ from leaderboards_scraper.web import get_json_from_url
 
 SRC_API_ROOT = "https://www.speedrun.com/api/v1"
 SRC_API_USER = SRC_API_ROOT + "/users/"
+SRC_API_RUNS_PARAMS = "status=verified&max=200&orderby=submitted&direction=desc"
+SRC_API_RUNS = SRC_API_ROOT + "/runs?" + SRC_API_RUNS_PARAMS
 
 
 def process_category_runs_page(category_id, url, page_number, runs: list[Run]):
@@ -54,7 +56,7 @@ def process_runs():
             runs = load_parsed_runs(category.id)
             process_category_runs_page(
                 category.id,
-                SRC_API_ROOT + f"/runs?max=200&category={category.id}",
+                f"{SRC_API_RUNS}&category={category.id}",
                 0,
                 runs,
             )

@@ -21,8 +21,6 @@ def main():
         seen_players = []
         pb_runs = []
         for run in runs:
-            if run.status != "verified":
-                continue
             player_ids_agg = "|".join(
                 filter(None, [player.id for player in run.players])
             )
