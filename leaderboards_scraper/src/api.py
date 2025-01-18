@@ -15,15 +15,15 @@ from leaderboards_scraper.fs import (
     store_raw_category_runs_page,
     store_raw_player,
 )
+from leaderboards_scraper.models import Run
 from leaderboards_scraper.src.parser import parse_category_runs_page, parse_raw_player
 from leaderboards_scraper.web import get_json_from_url
 
 SRC_API_ROOT = "https://www.speedrun.com/api/v1"
-SRC_API_RUNS = SRC_API_ROOT + "/runs?max=200&category="
 SRC_API_USER = SRC_API_ROOT + "/users/"
 
 
-def process_category_runs_page(category_id, url, page_number, runs):
+def process_category_runs_page(category_id, url, page_number, runs: list[Run]):
     if not does_raw_run_exist(category_id, page_number):
         response_json = get_json_from_url(url)
         store_raw_category_runs_page(category_id, page_number, response_json)
@@ -54,7 +54,7 @@ def process_runs():
             runs = load_parsed_runs(category.id)
             process_category_runs_page(
                 category.id,
-                f"{SRC_API_RUNS}{category.id}",
+                SRC_API_ROOT + f"/runs?max=200&category={category.id}",
                 0,
                 runs,
             )
@@ -72,12 +72,14 @@ def process_players():
     runs = load_parsed_runs()
     run_player_ids = set()
     for run in runs:
-        run_player_ids = run_player_ids.union([player.id for player in run.players])
+        run_player_ids = run_player_ids.union(
+            [player.id for player in run.players if player.id]
+        )
     # all players stored locally
     parsed_players = load_parsed_players()
     local_player_ids = set([player.id for player in parsed_players])
     unknown_player_ids = run_player_ids - local_player_ids
-    for unknown_player_id in filter(lambda x: x is not None, unknown_player_ids):
+    for unknown_player_id in unknown_player_ids:
         try:
             if not does_raw_player_exist(unknown_player_id):
                 response_json = get_json_from_url(SRC_API_USER + unknown_player_id)

@@ -11,7 +11,7 @@ def get_json_from_url(url):
         return
     logging.info(f"Making request for {url}")
     # cautiously wait before next call
-    time.sleep(random.randint(10, 20))
+    time.sleep(random.randint(1, 2))
     r = requests.get(url)
     if r.status_code != 200:
         raise Exception(f"Failed to download {url}")

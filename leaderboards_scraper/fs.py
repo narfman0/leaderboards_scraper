@@ -34,7 +34,7 @@ def load_raw_run_json(category_id, page_number):
         return result
 
 
-def load_categories(categories_json_path=CATEGORIES_JSON_PATH):
+def load_categories(categories_json_path=CATEGORIES_JSON_PATH) -> list[Category]:
     if not os.path.exists(categories_json_path):
         return []
     with open(categories_json_path) as file:

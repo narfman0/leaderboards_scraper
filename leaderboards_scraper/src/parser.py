@@ -1,7 +1,7 @@
 from leaderboards_scraper.models import Player, Run
 
 
-def parse_category_runs_page(runs_json):
+def parse_category_runs_page(runs_json) -> list[Run]:
     runs = []
     for run_json in runs_json:
         run = run_from_src_api_json(run_json)
@@ -10,14 +10,14 @@ def parse_category_runs_page(runs_json):
     return runs
 
 
-def parse_raw_player(player_json):
+def parse_raw_player(player_json) -> Player:
     return Player(
         id=player_json["id"],
         name=player_json["names"]["international"],
     )
 
 
-def run_from_src_api_json(run_json):
+def run_from_src_api_json(run_json) -> Run:
     run_id = run_json["id"]
     players = []
     for player in run_json["players"]:
