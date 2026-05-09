@@ -18,6 +18,7 @@ def main():
     # 2. generate markdown from local runs json
     for category_id, runs in category_to_runs.items():
         runs = sorted(runs, key=lambda run: run.time)
+        runs = [run for run in runs if run.status == "verified"]
         seen_players = []
         pb_runs = []
         for run in runs:
